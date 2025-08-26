@@ -12,6 +12,7 @@ const steps = [
   "Domain Setup",
   "Environment",
   "Solver Settings",
+  "Review & Run",
 ];
 
 const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, totalSteps, goToStep }) => {

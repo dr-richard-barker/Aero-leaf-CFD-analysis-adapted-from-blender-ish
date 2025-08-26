@@ -3,6 +3,7 @@ import React from 'react';
 import { DomainParams } from '../../types';
 import Slider from '../ui/Slider';
 import SelectField from '../ui/SelectField';
+import DomainVisualizer from '../DomainVisualizer';
 
 interface Step2Props {
   params: DomainParams;
@@ -19,13 +20,23 @@ const Step2_DomainSetup: React.FC<Step2Props> = ({ params, onParamChange }) => {
   };
 
   const boundaryOptions = [
-      {value: 'front', label: 'Front'},
-      {value: 'back', label: 'Back'},
-      {value: 'left', label: 'Left'},
-      {value: 'right', label: 'Right'},
-      {value: 'top', label: 'Top'},
-      {value: 'bottom', label: 'Bottom'},
-  ]
+      {value: 'front', label: 'Front (+Y)'},
+      {value: 'back', label: 'Back (-Y)'},
+      {value: 'right', label: 'Right (+X)'},
+      {value: 'left', label: 'Left (-X)'},
+      {value: 'top', label: 'Top (+Z)'},
+      {value: 'bottom', label: 'Bottom (-Z)'},
+  ];
+
+  const inletLabelInfo = boundaryOptions.find(opt => opt.value === params.inlet);
+  const outletLabelInfo = boundaryOptions.find(opt => opt.value === params.outlet);
+
+  const getDirection = (label: string | undefined): string => {
+    if (!label) return '';
+    const match = label.match(/\(.*\)/);
+    return match ? match[0] : '';
+  };
+
 
   return (
     <div>
@@ -59,14 +70,14 @@ const Step2_DomainSetup: React.FC<Step2Props> = ({ params, onParamChange }) => {
             <h3 className="text-lg font-semibold mb-4 text-text-primary">Boundary Conditions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <SelectField 
-                    label="Inlet (Airflow Source)"
+                    label={`Inlet ${getDirection(inletLabelInfo?.label)}`.trim()}
                     id="inlet"
                     value={params.inlet}
                     onChange={handleSelectChange('inlet')}
                     options={boundaryOptions.filter(opt => opt.value !== params.outlet)}
                 />
                 <SelectField 
-                    label="Outlet (Airflow Exit)"
+                    label={`Outlet ${getDirection(outletLabelInfo?.label)}`.trim()}
                     id="outlet"
                     value={params.outlet}
                     onChange={handleSelectChange('outlet')}
@@ -76,9 +87,9 @@ const Step2_DomainSetup: React.FC<Step2Props> = ({ params, onParamChange }) => {
         </div>
 
         <div className="bg-gray-800 p-4 rounded-lg">
-            <h4 className="font-semibold mb-2">Domain Visualization</h4>
-            <div className="w-full aspect-video bg-gray-900 rounded-md flex items-center justify-center">
-                <p className="text-text-secondary">Computational domain preview</p>
+            <h4 className="font-semibold mb-2 text-center text-text-secondary">Domain Visualization (Drag to rotate)</h4>
+            <div className="w-full h-[350px] bg-gray-900 rounded-md flex items-center justify-center overflow-hidden relative">
+                <DomainVisualizer params={params} />
             </div>
         </div>
       </div>

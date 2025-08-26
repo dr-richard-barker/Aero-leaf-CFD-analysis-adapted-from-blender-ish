@@ -1,17 +1,35 @@
 
+
 import React from 'react';
-import { SolverParams, SimulationParams } from '../../types';
+import { SolverParams } from '../../types';
 import SelectField from '../ui/SelectField';
 import InputField from '../ui/InputField';
-import SimulationSummary from '../SimulationSummary';
+import Slider from '../ui/Slider';
+import { InfoIcon } from '../icons/InfoIcon';
 
 interface Step4Props {
   params: SolverParams;
-  allParams: SimulationParams;
   onParamChange: <K extends keyof SolverParams>(field: K, value: SolverParams[K]) => void;
 }
 
-const Step4_SolverSettings: React.FC<Step4Props> = ({ params, onParamChange, allParams }) => {
+const TurbulenceModelTooltipContent = () => (
+    <div className="text-left space-y-2">
+      <p><strong>RANS:</strong> Computationally efficient, best for steady-state flows. Less accurate for highly turbulent conditions.</p>
+      <p><strong>LES:</strong> More accurate for complex, unsteady flows by resolving large eddies. Computationally expensive.</p>
+      <p><strong>DES:</strong> Hybrid model combining RANS near surfaces and LES elsewhere. Balances accuracy and cost.</p>
+    </div>
+);
+
+const MeshingLevelTooltipContent = () => (
+    <div className="text-left space-y-2">
+        <p><strong>Coarse:</strong> Fastest computation with lowest accuracy. Good for initial checks and rapid iteration.</p>
+        <p><strong>Medium:</strong> A good balance between computational cost and accuracy. Recommended for most standard simulations.</p>
+        <p><strong>Fine:</strong> Highest accuracy for detailed analysis, but significantly increases computation time and resource requirements.</p>
+    </div>
+);
+
+
+const Step4_SolverSettings: React.FC<Step4Props> = ({ params, onParamChange }) => {
   const handleSelectChange = (field: keyof SolverParams) => (e: React.ChangeEvent<HTMLSelectElement>) => {
     onParamChange(field, e.target.value as any);
   };
@@ -34,16 +52,25 @@ const Step4_SolverSettings: React.FC<Step4Props> = ({ params, onParamChange, all
                 { value: 'LES', label: 'LES (Large Eddy Simulation)'},
                 { value: 'DES', label: 'DES (Detached Eddy Simulation)'},
             ]}
+            tooltip={<TurbulenceModelTooltipContent />}
         />
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">Meshing Level</label>
+            <div className="flex items-center gap-2 mb-2">
+                <label className="text-sm font-medium text-text-secondary">Meshing Level</label>
+                 <div className="relative group">
+                    <InfoIcon className="w-4 h-4 text-text-secondary cursor-pointer" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-gray-900 border border-border text-text-secondary text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
+                        <MeshingLevelTooltipContent />
+                    </div>
+                </div>
+            </div>
           <div className="grid grid-cols-3 gap-4">
             {['coarse', 'medium', 'fine'].map(level => (
               <button
                 key={level}
                 onClick={() => onParamChange('meshingLevel', level as 'coarse' | 'medium' | 'fine')}
-                className={`p-4 rounded-lg border-2 transition-all text-center ${params.meshingLevel === level ? 'border-secondary bg-blue-900/30' : 'border-border bg-gray-700 hover:border-gray-500'}`}
+                className={`p-4 rounded-lg border-2 transition-all text-center ${params.meshingLevel === level ? 'border-secondary bg-blue-900/50 ring-2 ring-secondary ring-offset-2 ring-offset-surface' : 'border-border bg-gray-700 hover:border-gray-500'}`}
               >
                 <h4 className="font-semibold capitalize">{level}</h4>
               </button>
@@ -62,15 +89,15 @@ const Step4_SolverSettings: React.FC<Step4Props> = ({ params, onParamChange, all
                 step={1}
                 min={1}
             />
-            <InputField
+            <Slider
                 label="Time Step"
                 id="timeStep"
-                type="number"
                 value={params.timeStep}
                 onChange={handleInputChange('timeStep')}
-                unit="s"
+                min={0.001}
+                max={0.1}
                 step={0.001}
-                min={0.0001}
+                unit="s"
             />
         </div>
         
@@ -78,7 +105,6 @@ const Step4_SolverSettings: React.FC<Step4Props> = ({ params, onParamChange, all
             <p><strong className="font-semibold">Note:</strong> Finer meshes and advanced turbulence models (LES/DES) significantly increase computation time and cost.</p>
         </div>
       </div>
-      <SimulationSummary params={allParams} />
     </div>
   );
 };

@@ -10,6 +10,7 @@ import Step1_ModelUpload from './components/steps/Step1_ModelUpload';
 import Step2_DomainSetup from './components/steps/Step2_DomainSetup';
 import Step3_Environment from './components/steps/Step3_Environment';
 import Step4_SolverSettings from './components/steps/Step4_SolverSettings';
+import Step5_Summary from './components/steps/Step5_Summary';
 import ResultsDashboard from './components/ResultsDashboard';
 import { LeafIcon } from './components/icons/LeafIcon';
 
@@ -19,7 +20,7 @@ const App: React.FC = () => {
   const [status, setStatus] = useState<SimulationStatus>('idle');
   const [results, setResults] = useState<SimulationResults | null>(null);
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const handleParamChange = useCallback(<K extends keyof SimulationParams, V>(
     section: K,
@@ -76,8 +77,9 @@ const App: React.FC = () => {
         return <Step4_SolverSettings 
                   params={params.solver} 
                   onParamChange={(field, value) => handleParamChange('solver', field, value)}
-                  allParams={params}
                 />;
+      case 5:
+        return <Step5_Summary params={params} />;
       default:
         return null;
     }

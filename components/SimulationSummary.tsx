@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SimulationParams } from '../types';
 import { LeafIcon } from './icons/LeafIcon';
@@ -28,17 +27,31 @@ interface SummaryItemProps {
   label: string;
   value: string | number | null | undefined;
   unit?: string;
+  className?: string;
 }
 
-const SummaryItem: React.FC<SummaryItemProps> = ({ label, value, unit }) => (
-  <div className="col-span-1 flex flex-col">
+const SummaryItem: React.FC<SummaryItemProps> = ({ label, value, unit, className = "col-span-1" }) => (
+  <div className={`${className} flex flex-col`}>
     <dt className="text-text-secondary truncate">{label}</dt>
-    <dd className="font-semibold text-text-primary capitalize truncate">{value ?? 'N/A'} {unit}</dd>
+    <dd className="font-semibold text-text-primary truncate normal-case">{value ?? 'N/A'} {unit}</dd>
   </div>
 );
 
 const SimulationSummary: React.FC<{ params: SimulationParams }> = ({ params }) => {
   const { model, domain, environment, solver } = params;
+
+  const getTurbulenceModelDisplay = (model: 'RANS' | 'LES' | 'DES'): string => {
+    switch (model) {
+      case 'RANS':
+        return 'RANS (Reynolds-Averaged Navier-Stokes)';
+      case 'LES':
+        return 'LES (Large Eddy Simulation)';
+      case 'DES':
+        return 'DES (Detached Eddy Simulation)';
+      default:
+        return model;
+    }
+  };
 
   return (
     <div className="mt-12 border-t border-border pt-6">
@@ -59,7 +72,7 @@ const SimulationSummary: React.FC<{ params: SimulationParams }> = ({ params }) =
 
         <SummarySection title="Environment" icon={<WindIcon className="w-5 h-5 text-yellow-400" />}>
           <SummaryItem label="Wind Speed" value={environment.windSpeed} unit="m/s" />
-          <SummaryItem label="Direction" value={environment.windDirection} unit="°" />
+          <SummaryItem label="Wind Direction" value={environment.windDirection} unit="°" />
           <SummaryItem label="Temperature" value={environment.temperature} unit="°C" />
           <SummaryItem label="Pressure" value={environment.pressure} unit="Pa" />
           <SummaryItem label="Density" value={environment.airDensity} unit="kg/m³" />
@@ -67,7 +80,7 @@ const SimulationSummary: React.FC<{ params: SimulationParams }> = ({ params }) =
         </SummarySection>
 
         <SummarySection title="Solver" icon={<CogIcon className="w-5 h-5 text-gray-400" />}>
-          <SummaryItem label="Turbulence" value={solver.turbulenceModel} />
+          <SummaryItem label="Turbulence" value={getTurbulenceModelDisplay(solver.turbulenceModel)} className="col-span-2 sm:col-span-3" />
           <SummaryItem label="Meshing" value={solver.meshingLevel} />
           <SummaryItem label="Run Time" value={solver.runTime} unit="s" />
           <SummaryItem label="Time Step" value={solver.timeStep} unit="s" />

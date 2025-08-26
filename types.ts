@@ -1,4 +1,6 @@
 
+export type BoundaryFace = 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom';
+
 export interface ModelParams {
   fileName: string | null;
   file: File | null;
@@ -9,8 +11,8 @@ export interface DomainParams {
   sizeX: number;
   sizeY: number;
   sizeZ: number;
-  inlet: 'front' | 'left' | 'top';
-  outlet: 'back' | 'right' | 'bottom';
+  inlet: BoundaryFace;
+  outlet: BoundaryFace;
 }
 
 export interface EnvironmentParams {
