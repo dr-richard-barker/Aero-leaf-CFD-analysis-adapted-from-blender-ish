@@ -89,13 +89,13 @@ const ResultsDisplay: React.FC<{ results: SimulationResults; onReset: () => void
                         <LineChart data={results.dragCoefficient}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                             <XAxis dataKey="time" stroke="#D1D5DB" label={{ value: 'Time (s)', position: 'insideBottom', offset: -5, fill: '#D1D5DB' }} />
-                            <YAxis stroke="#D1D5DB" label={{ value: 'Drag Coeff.', angle: -90, position: 'insideLeft', fill: '#D1D5DB', style: { textAnchor: 'middle' } }} />
+                            <YAxis stroke="#D1D5DB" label={{ value: 'Drag Coefficient', angle: -90, position: 'insideLeft', fill: '#D1D5DB', style: { textAnchor: 'middle' } }} />
                             <Tooltip 
                                 contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151' }} 
                                 formatter={(value: number) => value.toFixed(4)}
                             />
                             <Legend wrapperStyle={{ color: '#F9FAFB' }} />
-                            <Line type="monotone" dataKey="value" name="Drag Coeff." stroke="#4CAF50" strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="value" name="Drag Coefficient" stroke="#4CAF50" strokeWidth={2} dot={false} />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>

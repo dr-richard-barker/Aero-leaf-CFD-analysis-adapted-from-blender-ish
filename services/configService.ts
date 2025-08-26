@@ -1,5 +1,5 @@
-
 import { SimulationParams } from '../types';
+import { initialSimulationParams } from '../constants';
 
 const CONFIG_STORAGE_KEY = 'aeroLeafCfdConfig';
 
@@ -24,7 +24,8 @@ export const saveParamsToLocalStorage = (params: SimulationParams): void => {
 };
 
 /**
- * Loads simulation parameters from the browser's localStorage.
+ * Loads simulation parameters from the browser's localStorage, merging with defaults
+ * to ensure a complete and valid configuration.
  * @returns A SimulationParams object if found and valid, otherwise null.
  */
 export const loadParamsFromLocalStorage = (): SimulationParams | null => {
@@ -34,17 +35,19 @@ export const loadParamsFromLocalStorage = (): SimulationParams | null => {
       return null;
     }
 
-    const parsedParams = JSON.parse(paramsString);
+    const loadedParams = JSON.parse(paramsString);
 
-    // Basic validation to ensure the loaded object has the expected structure
-    if (!parsedParams.model || !parsedParams.domain || !parsedParams.environment || !parsedParams.solver) {
-      throw new Error("Invalid configuration format found in localStorage.");
-    }
+    // Deep merge loaded params with initial params to handle missing fields
+    // from older saved configurations. This ensures all properties, including
+    // meshing level and turbulence model, are present.
+    const mergedParams: SimulationParams = {
+      model: { ...initialSimulationParams.model, ...(loadedParams.model || {}), file: null },
+      domain: { ...initialSimulationParams.domain, ...(loadedParams.domain || {}) },
+      environment: { ...initialSimulationParams.environment, ...(loadedParams.environment || {}) },
+      solver: { ...initialSimulationParams.solver, ...(loadedParams.solver || {}) },
+    };
 
-    // Ensure the non-serializable 'file' property is null after loading
-    parsedParams.model.file = null;
-
-    return parsedParams as SimulationParams;
+    return mergedParams;
   } catch (error) {
     console.error('Failed to load or parse configuration from localStorage:', error);
     // If parsing fails, the stored data might be corrupted, so we clear it.
