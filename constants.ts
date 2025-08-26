@@ -1,4 +1,3 @@
-
 import { SimulationParams } from './types';
 
 export const initialSimulationParams: SimulationParams = {
@@ -13,6 +12,9 @@ export const initialSimulationParams: SimulationParams = {
     sizeZ: 5,
     inlet: 'front',
     outlet: 'back',
+    objectPositionX: 0,
+    objectPositionY: 0,
+    objectPositionZ: 0,
   },
   environment: {
     windSpeed: 5, // m/s

@@ -37,6 +37,32 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ label, value, unit, className
   </div>
 );
 
+const MeshingImpactIndicator: React.FC<{ level: 'coarse' | 'medium' | 'fine' }> = ({ level }) => {
+  const details = {
+    coarse: {
+      text: 'Fastest / Low Accuracy',
+      className: 'bg-green-500/20 text-green-300',
+    },
+    medium: {
+      text: 'Balanced',
+      className: 'bg-blue-500/20 text-blue-300',
+    },
+    fine: {
+      text: 'Slowest / High Accuracy',
+      className: 'bg-yellow-500/20 text-yellow-300',
+    },
+  };
+
+  const { text, className } = details[level];
+
+  return (
+    <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-normal ${className}`}>
+      {text}
+    </span>
+  );
+};
+
+
 const SimulationSummary: React.FC<{ params: SimulationParams }> = ({ params }) => {
   const { model, domain, environment, solver } = params;
 
@@ -68,6 +94,10 @@ const SimulationSummary: React.FC<{ params: SimulationParams }> = ({ params }) =
           <SummaryItem label="Size Z" value={domain.sizeZ} unit="m" />
           <SummaryItem label="Inlet" value={domain.inlet} />
           <SummaryItem label="Outlet" value={domain.outlet} />
+          <div />
+          <SummaryItem label="Object Pos X" value={domain.objectPositionX} unit="m" />
+          <SummaryItem label="Object Pos Y" value={domain.objectPositionY} unit="m" />
+          <SummaryItem label="Object Pos Z" value={domain.objectPositionZ} unit="m" />
         </SummarySection>
 
         <SummarySection title="Environment" icon={<WindIcon className="w-5 h-5 text-yellow-400" />}>
@@ -81,9 +111,16 @@ const SimulationSummary: React.FC<{ params: SimulationParams }> = ({ params }) =
 
         <SummarySection title="Solver" icon={<CogIcon className="w-5 h-5 text-gray-400" />}>
           <SummaryItem label="Turbulence" value={getTurbulenceModelDisplay(solver.turbulenceModel)} className="col-span-2 sm:col-span-3" />
-          <SummaryItem label="Meshing" value={solver.meshingLevel} />
+          <div className="col-span-2 flex flex-col">
+            <dt className="text-text-secondary truncate">Meshing</dt>
+            <dd className="font-semibold text-text-primary truncate normal-case flex items-center">
+              <span className="capitalize">{solver.meshingLevel}</span>
+              <MeshingImpactIndicator level={solver.meshingLevel} />
+            </dd>
+          </div>
           <SummaryItem label="Run Time" value={solver.runTime} unit="s" />
           <SummaryItem label="Time Step" value={solver.timeStep} unit="s" />
+        {/* FIX: Corrected closing tag for SummarySection component */}
         </SummarySection>
       </div>
     </div>

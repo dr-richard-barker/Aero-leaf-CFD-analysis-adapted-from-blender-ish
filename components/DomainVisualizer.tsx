@@ -1,12 +1,33 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { DomainParams } from '../types';
+import { PlusIcon } from './icons/PlusIcon';
+import { MinusIcon } from './icons/MinusIcon';
+import { RotateCcwIcon } from './icons/RotateCcwIcon';
+import { LeafIcon } from './icons/LeafIcon';
 
 interface DomainVisualizerProps {
   params: DomainParams;
 }
 
+const initialRotation = { x: -25, y: -30 };
+const ZOOM_STEP = 0.15;
+const MAX_ZOOM = 2.5;
+const MIN_ZOOM = 0.4;
+
+const ControlButton: React.FC<{ onClick: () => void; 'aria-label': string; children: React.ReactNode }> = ({ onClick, children, ...props }) => (
+  <button
+    onClick={onClick}
+    className="w-8 h-8 rounded-full bg-surface/70 text-text-secondary hover:bg-secondary hover:text-white flex items-center justify-center transition-colors shadow-lg backdrop-blur-sm"
+    {...props}
+  >
+    {children}
+  </button>
+);
+
+
 const DomainVisualizer: React.FC<DomainVisualizerProps> = ({ params }) => {
-  const [rotation, setRotation] = useState({ x: -25, y: -30 });
+  const [rotation, setRotation] = useState(initialRotation);
+  const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
 
@@ -28,13 +49,21 @@ const DomainVisualizer: React.FC<DomainVisualizerProps> = ({ params }) => {
     lastMousePos.current = { x: e.clientX, y: e.clientY };
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
   
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setIsDragging(false);
+  }, []);
+
+  const handleZoomIn = () => setZoom(prev => Math.min(prev + ZOOM_STEP, MAX_ZOOM));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev - ZOOM_STEP, MIN_ZOOM));
+  const handleResetView = () => {
+    setRotation(initialRotation);
+    setZoom(1);
   };
+
 
   const vizContainerSize = 300;
   const { sizeX, sizeY, sizeZ, inlet, outlet } = params;
@@ -82,10 +111,16 @@ const DomainVisualizer: React.FC<DomainVisualizerProps> = ({ params }) => {
     { name: 'top', style: { width: `${width}px`, height: `${depth}px`, transform: `rotateX(90deg) translateZ(${height / 2}px)` } },
     { name: 'bottom', style: { width: `${width}px`, height: `${depth}px`, transform: `rotateX(-90deg) translateZ(${height / 2}px)` } },
   ];
+  
+  const objectPositionTransform = `
+    translateX(${params.objectPositionX * scale}px)
+    translateY(${-params.objectPositionZ * scale}px)
+    translateZ(${params.objectPositionY * scale}px)
+  `;
 
   return (
     <div
-      className={`w-full h-full flex flex-col items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} select-none`}
+      className={`w-full h-full flex flex-col items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} select-none relative`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -96,7 +131,7 @@ const DomainVisualizer: React.FC<DomainVisualizerProps> = ({ params }) => {
           className="absolute w-full h-full transition-transform duration-75 ease-out"
           style={{
             transformStyle: 'preserve-3d',
-            transform: `translateZ(-150px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+            transform: `translateZ(-150px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${zoom})`,
           }}
         >
           {/* Cube Faces */}
@@ -113,6 +148,20 @@ const DomainVisualizer: React.FC<DomainVisualizerProps> = ({ params }) => {
               <span className="p-1">{getFaceLabel(face.name)}</span>
             </div>
           ))}
+
+          {/* Inner Object representing the Leaf */}
+          <div
+            className="absolute top-1/2 left-1/2 flex items-center justify-center bg-accent/30 border border-accent rounded-sm"
+            style={{
+              width: '50px',
+              height: '70px',
+              transformStyle: 'preserve-3d',
+              transform: `translateX(-25px) translateY(-35px) ${objectPositionTransform}`
+            }}
+          >
+              <LeafIcon className="w-8 h-8 text-green-200" style={{ transform: `rotateY(${-rotation.y}deg) rotateX(${-rotation.x}deg)` }}/>
+          </div>
+
 
           {/* Axis indicators */}
           <div className="absolute top-1/2 left-1/2 pointer-events-none" style={{transformStyle: 'preserve-3d'}}>
@@ -141,6 +190,18 @@ const DomainVisualizer: React.FC<DomainVisualizerProps> = ({ params }) => {
             <div className="absolute top-1/2 left-1/2 text-blue-400/70 font-bold text-xs" style={{transform: `translateY(${axisArmLength}px) rotateY(${-rotation.y}deg) rotateX(${-rotation.x}deg)`}}>-Z</div>
           </div>
         </div>
+      </div>
+
+      <div className="absolute bottom-4 right-4 flex flex-col gap-2 z-10">
+        <ControlButton onClick={handleZoomIn} aria-label="Zoom In">
+          <PlusIcon className="w-5 h-5" />
+        </ControlButton>
+        <ControlButton onClick={handleZoomOut} aria-label="Zoom Out">
+          <MinusIcon className="w-5 h-5" />
+        </ControlButton>
+        <ControlButton onClick={handleResetView} aria-label="Reset View">
+          <RotateCcwIcon className="w-5 h-5" />
+        </ControlButton>
       </div>
     </div>
   );

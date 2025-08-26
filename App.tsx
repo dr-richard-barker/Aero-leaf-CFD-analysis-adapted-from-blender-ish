@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { SimulationParams, SimulationResults, SimulationStatus } from './types';
 import { initialSimulationParams } from './constants';
 import { runSimulation } from './services/simulationService';
+import { saveParamsToLocalStorage, loadParamsFromLocalStorage } from './services/configService';
 
 import Header from './components/Header';
 import StepIndicator from './components/StepIndicator';
@@ -13,6 +14,8 @@ import Step4_SolverSettings from './components/steps/Step4_SolverSettings';
 import Step5_Summary from './components/steps/Step5_Summary';
 import ResultsDashboard from './components/ResultsDashboard';
 import { LeafIcon } from './components/icons/LeafIcon';
+import { SaveIcon } from './components/icons/SaveIcon';
+import { LoadIcon } from './components/icons/LoadIcon';
 
 const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -64,6 +67,23 @@ const App: React.FC = () => {
     setResults(null);
   };
 
+  const handleSaveConfig = () => {
+    saveParamsToLocalStorage(params);
+    alert('Configuration saved successfully!');
+  };
+
+  const handleLoadConfig = () => {
+    const loadedParams = loadParamsFromLocalStorage();
+    if (loadedParams) {
+      setParams(loadedParams);
+      setCurrentStep(1); // Reset to first step to review
+      setTimeout(() => {
+        alert('Configuration loaded. Please review the settings and re-upload your 3D model file if necessary.');
+      }, 100);
+    } else {
+      alert('No saved configuration found or it was corrupted.');
+    }
+  };
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -92,39 +112,59 @@ const App: React.FC = () => {
         {status !== 'idle' ? (
           <ResultsDashboard status={status} results={results} onReset={handleReset} />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-1">
-              <StepIndicator currentStep={currentStep} totalSteps={totalSteps} goToStep={goToStep} />
-            </div>
-            <div className="md:col-span-3 bg-surface rounded-lg shadow-lg p-8">
-              {renderStepContent()}
-              <div className="flex justify-between mt-12 border-t border-border pt-6">
+          <>
+            <div className="flex justify-end gap-4 mb-6">
                 <button
-                  onClick={handleBack}
-                  disabled={currentStep === 1}
-                  className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    onClick={handleSaveConfig}
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-surface text-text-secondary rounded-md border border-border hover:bg-gray-700 hover:text-text-primary transition-colors"
+                    aria-label="Save Configuration"
                 >
-                  Back
+                    <SaveIcon className="w-4 h-4" />
+                    <span>Save Configuration</span>
                 </button>
-                {currentStep < totalSteps ? (
+                <button
+                    onClick={handleLoadConfig}
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-surface text-text-secondary rounded-md border border-border hover:bg-gray-700 hover:text-text-primary transition-colors"
+                    aria-label="Load Configuration"
+                >
+                    <LoadIcon className="w-4 h-4" />
+                    <span>Load Configuration</span>
+                </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="md:col-span-1">
+                <StepIndicator currentStep={currentStep} totalSteps={totalSteps} goToStep={goToStep} />
+              </div>
+              <div className="md:col-span-3 bg-surface rounded-lg shadow-lg p-8">
+                {renderStepContent()}
+                <div className="flex justify-between mt-12 border-t border-border pt-6">
                   <button
-                    onClick={handleNext}
-                    className="px-6 py-2 bg-secondary text-white rounded-md hover:bg-blue-500 transition-colors"
+                    onClick={handleBack}
+                    disabled={currentStep === 1}
+                    className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    Next
+                    Back
                   </button>
-                ) : (
-                  <button
-                    onClick={handleRunSimulation}
-                    className="px-6 py-2 bg-accent text-white rounded-md hover:bg-green-600 flex items-center gap-2 transition-colors"
-                  >
-                    <LeafIcon className="w-5 h-5" />
-                    Run Simulation
-                  </button>
-                )}
+                  {currentStep < totalSteps ? (
+                    <button
+                      onClick={handleNext}
+                      className="px-6 py-2 bg-secondary text-white rounded-md hover:bg-blue-500 transition-colors"
+                    >
+                      Next
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleRunSimulation}
+                      className="px-6 py-2 bg-accent text-white rounded-md hover:bg-green-600 flex items-center gap-2 transition-colors"
+                    >
+                      <LeafIcon className="w-5 h-5" />
+                      Run Simulation
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </main>
     </div>

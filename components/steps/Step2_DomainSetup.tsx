@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DomainParams } from '../../types';
 import Slider from '../ui/Slider';
@@ -82,6 +81,33 @@ const Step2_DomainSetup: React.FC<Step2Props> = ({ params, onParamChange }) => {
                     value={params.outlet}
                     onChange={handleSelectChange('outlet')}
                     options={boundaryOptions.filter(opt => opt.value !== params.inlet)}
+                />
+            </div>
+        </div>
+
+        <div className="border-t border-border pt-6">
+            <h3 className="text-lg font-semibold mb-4 text-text-primary">Object Placement</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Slider 
+                    label="Object Position X"
+                    id="objectPositionX"
+                    value={params.objectPositionX}
+                    onChange={handleSliderChange('objectPositionX')}
+                    min={-params.sizeX / 2} max={params.sizeX / 2} step={0.1} unit="m"
+                />
+                <Slider 
+                    label="Object Position Y"
+                    id="objectPositionY"
+                    value={params.objectPositionY}
+                    onChange={handleSliderChange('objectPositionY')}
+                    min={-params.sizeY / 2} max={params.sizeY / 2} step={0.1} unit="m"
+                />
+                <Slider 
+                    label="Object Position Z"
+                    id="objectPositionZ"
+                    value={params.objectPositionZ}
+                    onChange={handleSliderChange('objectPositionZ')}
+                    min={-params.sizeZ / 2} max={params.sizeZ / 2} step={0.1} unit="m"
                 />
             </div>
         </div>

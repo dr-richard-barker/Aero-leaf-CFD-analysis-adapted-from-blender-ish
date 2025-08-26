@@ -1,4 +1,3 @@
-
 export type BoundaryFace = 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom';
 
 export interface ModelParams {
@@ -13,6 +12,9 @@ export interface DomainParams {
   sizeZ: number;
   inlet: BoundaryFace;
   outlet: BoundaryFace;
+  objectPositionX: number;
+  objectPositionY: number;
+  objectPositionZ: number;
 }
 
 export interface EnvironmentParams {
