@@ -1,0 +1,132 @@
+
+import React, { useState, useCallback } from 'react';
+import { SimulationParams, SimulationResults, SimulationStatus } from './types';
+import { initialSimulationParams } from './constants';
+import { runSimulation } from './services/simulationService';
+
+import Header from './components/Header';
+import StepIndicator from './components/StepIndicator';
+import Step1_ModelUpload from './components/steps/Step1_ModelUpload';
+import Step2_DomainSetup from './components/steps/Step2_DomainSetup';
+import Step3_Environment from './components/steps/Step3_Environment';
+import Step4_SolverSettings from './components/steps/Step4_SolverSettings';
+import ResultsDashboard from './components/ResultsDashboard';
+import { LeafIcon } from './components/icons/LeafIcon';
+
+const App: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [params, setParams] = useState<SimulationParams>(initialSimulationParams);
+  const [status, setStatus] = useState<SimulationStatus>('idle');
+  const [results, setResults] = useState<SimulationResults | null>(null);
+
+  const totalSteps = 4;
+
+  const handleParamChange = useCallback(<K extends keyof SimulationParams, V>(
+    section: K,
+    field: keyof SimulationParams[K],
+    value: V
+  ) => {
+    setParams(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value,
+      },
+    }));
+  }, []);
+
+  const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, totalSteps + 1));
+  const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+  const goToStep = (step: number) => {
+    if (step > 0 && step <= totalSteps) {
+      setCurrentStep(step);
+    }
+  };
+
+  const handleRunSimulation = async () => {
+    setStatus('running');
+    setCurrentStep(totalSteps + 1); // Move to the results/loading view
+    try {
+      const simResults = await runSimulation(params);
+      setResults(simResults);
+      setStatus('completed');
+    } catch (error) {
+      console.error("Simulation failed:", error);
+      setStatus('error');
+    }
+  };
+  
+  const handleReset = () => {
+    setCurrentStep(1);
+    setParams(initialSimulationParams);
+    setStatus('idle');
+    setResults(null);
+  };
+
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <Step1_ModelUpload params={params.model} onParamChange={(field, value) => handleParamChange('model', field, value)} />;
+      case 2:
+        return <Step2_DomainSetup params={params.domain} onParamChange={(field, value) => handleParamChange('domain', field, value)} />;
+      case 3:
+        return <Step3_Environment params={params.environment} onParamChange={(field, value) => handleParamChange('environment', field, value)} />;
+      case 4:
+        return <Step4_SolverSettings 
+                  params={params.solver} 
+                  onParamChange={(field, value) => handleParamChange('solver', field, value)}
+                  allParams={params}
+                />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background font-sans">
+      <Header />
+      <main className="container mx-auto p-4 md:p-8">
+        {status !== 'idle' ? (
+          <ResultsDashboard status={status} results={results} onReset={handleReset} />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-1">
+              <StepIndicator currentStep={currentStep} totalSteps={totalSteps} goToStep={goToStep} />
+            </div>
+            <div className="md:col-span-3 bg-surface rounded-lg shadow-lg p-8">
+              {renderStepContent()}
+              <div className="flex justify-between mt-12 border-t border-border pt-6">
+                <button
+                  onClick={handleBack}
+                  disabled={currentStep === 1}
+                  className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Back
+                </button>
+                {currentStep < totalSteps ? (
+                  <button
+                    onClick={handleNext}
+                    className="px-6 py-2 bg-secondary text-white rounded-md hover:bg-blue-500 transition-colors"
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleRunSimulation}
+                    className="px-6 py-2 bg-accent text-white rounded-md hover:bg-green-600 flex items-center gap-2 transition-colors"
+                  >
+                    <LeafIcon className="w-5 h-5" />
+                    Run Simulation
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default App;

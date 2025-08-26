@@ -1,0 +1,5 @@
+{
+  "name": "AeroLeaf CFD: Blender-Integrated Airflow Analysis",
+  "description": "A robust, cloud-based environment for running Blender, specifically configured for high-performance Computational Fluid Dynamics (CFD) simulations. This application enables researchers to model and analyze complex airflow patterns around various leaf geometries under realistic atmospheric conditions.",
+  "requestFramePermissions": []
+}
