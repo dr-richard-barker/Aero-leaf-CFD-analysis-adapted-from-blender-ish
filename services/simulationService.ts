@@ -1,13 +1,16 @@
 
 import { SimulationParams, SimulationResults, ForceDataPoint } from '../types';
+import { generateScalarFieldImage, generateMeshImage, generateStreamlinesData } from './visualizationGenerator';
 
 // Mock function to generate plausible-looking force data
-const generateForceData = (runTime: number, timeStep: number, scale: number): ForceDataPoint[] => {
+const generateForceData = (runTime: number, timeStep: number, scale: number, oscillation: number): ForceDataPoint[] => {
   const data: ForceDataPoint[] = [];
   let value = (Math.random() - 0.5) * scale;
-  for (let time = 0; time <= runTime; time += timeStep * 10) { // reduce data points for better chart performance
-    value += (Math.random() - 0.5) * (scale / 10); // simulate fluctuations
-    data.push({ time: parseFloat(time.toFixed(2)), value: parseFloat(value.toFixed(4)) });
+  for (let time = 0; time <= runTime; time += timeStep * 10) { // reduce data points
+    // Add a sinusoidal component for more realistic oscillation
+    const sinusoidal = Math.sin(time * oscillation) * (scale / 5);
+    value += (Math.random() - 0.5) * (scale / 10); // simulate noise
+    data.push({ time: parseFloat(time.toFixed(2)), value: parseFloat((value + sinusoidal).toFixed(4)) });
   }
   return data;
 };
@@ -28,14 +31,29 @@ export const runSimulation = (params: SimulationParams): Promise<SimulationResul
       }
       
       const results: SimulationResults = {
-        dragCoefficient: generateForceData(params.solver.runTime, params.solver.timeStep, 0.5),
-        liftForce: generateForceData(params.solver.runTime, params.solver.timeStep, 0.2),
-        velocityPlotUrl: `https://picsum.photos/seed/${Math.random()}/800/400`,
-        pressureContourUrl: `https://picsum.photos/seed/${Math.random()}/800/400`,
-        streamlinesUrl: `https://picsum.photos/seed/${Math.random()}/800/400`,
-        turbulenceKineticEnergyUrl: `https://picsum.photos/seed/${Math.random()}/800/400`,
-        meshDetailUrl: `https://picsum.photos/seed/${Math.random()}/800/400`,
+        dragCoefficient: generateForceData(params.solver.runTime, params.solver.timeStep, 0.5, 0.5),
+        liftForce: generateForceData(params.solver.runTime, params.solver.timeStep, 0.2, 1.2),
+        velocityPlotUrl: generateScalarFieldImage(params, 'velocity'),
+        pressureContourUrl: generateScalarFieldImage(params, 'pressure'),
+        turbulenceKineticEnergyUrl: generateScalarFieldImage(params, 'tke'),
+        meshDetailUrl: generateMeshImage(params),
+        streamlinesUrl: '', // This will be populated below
+        streamlinesData: generateStreamlinesData(params),
       };
+
+      // Create a static SVG for the 2D streamlines card
+      const svg = `<svg viewBox="-300 -200 600 400" xmlns="http://www.w3.org/2000/svg" style="background-color: #1F2937;">
+        <defs>
+            <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" style="stop-color:rgb(75,85,99);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:rgb(31,41,55);stop-opacity:1" />
+            </radialGradient>
+        </defs>
+        <rect x="-300" y="-200" width="600" height="400" fill="url(#grad1)" />
+        ${results.streamlinesData.map(line => `<path d="${line.d}" fill="none" stroke="${line.stroke}" stroke-width="2"/>`).join('')}
+        </svg>`;
+      results.streamlinesUrl = `data:image/svg+xml;base64,${btoa(svg)}`;
+
 
       console.log("Simulation completed with results:", results);
       resolve(results);

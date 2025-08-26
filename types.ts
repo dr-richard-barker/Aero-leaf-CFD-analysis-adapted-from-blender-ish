@@ -45,6 +45,12 @@ export interface ForceDataPoint {
   value: number;
 }
 
+export interface StreamlineData {
+    d: string; // SVG path data
+    stroke: string; // color
+    duration: number; // animation duration
+}
+
 export interface SimulationResults {
   dragCoefficient: ForceDataPoint[];
   liftForce: ForceDataPoint[];
@@ -53,6 +59,7 @@ export interface SimulationResults {
   streamlinesUrl: string;
   turbulenceKineticEnergyUrl: string;
   meshDetailUrl: string;
+  streamlinesData: StreamlineData[];
 }
 
 export type SimulationStatus = 'idle' | 'running' | 'completed' | 'error';

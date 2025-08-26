@@ -5,6 +5,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { RefreshIcon } from './icons/RefreshIcon';
 import { AlertTriangleIcon } from './icons/AlertTriangleIcon';
 import { MeshIcon } from './icons/MeshIcon';
+import Simulation3DViewer from './Simulation3DViewer';
 
 interface ResultsDashboardProps {
   status: SimulationStatus;
@@ -82,6 +83,10 @@ const ResultsDisplay: React.FC<{ results: SimulationResults; onReset: () => void
                 </button>
             </div>
 
+            <div className="mb-8 w-full h-[400px] md:h-[500px]">
+                <Simulation3DViewer streamlinesData={results.streamlinesData} />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div className="bg-surface p-4 rounded-lg shadow-lg">
                     <h3 className="text-lg font-semibold mb-4 text-text-primary">Drag Coefficient</h3>
@@ -117,11 +122,11 @@ const ResultsDisplay: React.FC<{ results: SimulationResults; onReset: () => void
                 </div>
             </div>
             
-            <h3 className="text-2xl font-bold text-text-primary mb-4">Visualizations</h3>
+            <h3 className="text-2xl font-bold text-text-primary mb-4">2D Data Slices</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <VisualizationCard title="Velocity Plot" imageUrl={results.velocityPlotUrl} icon={<VelocityIcon className="w-6 h-6" />} />
                 <VisualizationCard title="Pressure Contour" imageUrl={results.pressureContourUrl} icon={<PressureIcon className="w-6 h-6" />} />
-                <VisualizationCard title="Streamlines" imageUrl={results.streamlinesUrl} icon={<StreamlinesIcon className="w-6 h-6" />} />
+                <VisualizationCard title="Streamlines (Static)" imageUrl={results.streamlinesUrl} icon={<StreamlinesIcon className="w-6 h-6" />} />
                 <VisualizationCard title="Turbulence Kinetic Energy" imageUrl={results.turbulenceKineticEnergyUrl} icon={<TurbulenceIcon className="w-6 h-6" />} />
                 <VisualizationCard title="Mesh Detail" imageUrl={results.meshDetailUrl} icon={<MeshIcon className="w-6 h-6" />} />
             </div>
