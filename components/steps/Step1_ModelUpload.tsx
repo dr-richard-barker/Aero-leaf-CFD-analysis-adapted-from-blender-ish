@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { ModelParams } from '../../types';
 import { UploadCloudIcon } from '../icons/UploadCloudIcon';
 import { FileIcon } from '../icons/FileIcon';
+import ModelPreview3D from '../ModelPreview3D';
 
 interface Step1Props {
   params: ModelParams;
@@ -39,6 +40,33 @@ const Step1_ModelUpload: React.FC<Step1Props> = ({ params, onParamChange }) => {
     fileInputRef.current?.click();
   };
 
+  const handleLoadDemo = () => {
+    const demoObjContent = `# AeroLeaf CFD Demo Model
+# A simple, stylized leaf for quick simulations.
+# Vertices
+v 0.0 0.0 0.0   # 1 - Base of leaf blade
+v -0.8 1.5 0.0  # 2 - Left bottom
+v -1.2 3.5 0.0  # 3 - Left middle
+v -0.5 5.0 0.0  # 4 - Left top
+v 0.0 6.0 0.0   # 5 - Tip of leaf
+v 0.5 5.0 0.0   # 6 - Right top
+v 1.2 3.5 0.0   # 7 - Right middle
+v 0.8 1.5 0.0   # 8 - Right bottom
+
+# Faces (triangulated for simplicity)
+f 1 2 3
+f 1 3 4
+f 1 4 5
+f 1 5 6
+f 1 6 7
+f 1 7 8
+f 1 8 2
+`;
+    const demoFile = new File([demoObjContent], "demo-leaf.obj", { type: "text/plain" });
+    onParamChange('file', demoFile);
+    onParamChange('fileName', demoFile.name);
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6 text-text-primary">1. 3D Leaf Model</h2>
@@ -72,6 +100,17 @@ const Step1_ModelUpload: React.FC<Step1Props> = ({ params, onParamChange }) => {
               </div>
             )}
           </div>
+           <div className="text-center mt-4">
+            <p className="text-sm text-text-secondary">
+              Don't have a model?{' '}
+              <button
+                onClick={handleLoadDemo}
+                className="text-secondary hover:text-blue-400 font-semibold underline focus:outline-none focus:ring-2 focus:ring-secondary rounded"
+              >
+                Load a demo leaf
+              </button>
+            </p>
+          </div>
         </div>
 
         <div>
@@ -94,8 +133,12 @@ const Step1_ModelUpload: React.FC<Step1Props> = ({ params, onParamChange }) => {
 
         <div className="bg-gray-800 p-4 rounded-lg">
             <h4 className="font-semibold mb-2">Model Preview</h4>
-            <div className="w-full aspect-video bg-gray-900 rounded-md flex items-center justify-center">
-                <p className="text-text-secondary">3D model preview will appear here</p>
+            <div className="w-full aspect-video bg-gray-900 rounded-md flex items-center justify-center p-4 relative overflow-hidden">
+                {params.file ? (
+                  <ModelPreview3D file={params.file} fileName={params.fileName} />
+                ) : (
+                  <p className="text-text-secondary">3D model preview will appear here</p>
+                )}
             </div>
         </div>
       </div>

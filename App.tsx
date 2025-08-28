@@ -110,7 +110,7 @@ const App: React.FC = () => {
       <Header />
       <main className="container mx-auto p-4 md:p-8">
         {status !== 'idle' ? (
-          <ResultsDashboard status={status} results={results} onReset={handleReset} />
+          <ResultsDashboard status={status} results={results} onReset={handleReset} modelParams={params.model} />
         ) : (
           <>
             <div className="flex justify-end gap-4 mb-6">

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SimulationResults, SimulationStatus } from '../types';
+import { SimulationResults, SimulationStatus, ModelParams } from '../types';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { RefreshIcon } from './icons/RefreshIcon';
 import { AlertTriangleIcon } from './icons/AlertTriangleIcon';
@@ -11,6 +11,7 @@ interface ResultsDashboardProps {
   status: SimulationStatus;
   results: SimulationResults | null;
   onReset: () => void;
+  modelParams: ModelParams;
 }
 
 const LoadingIndicator: React.FC = () => {
@@ -55,7 +56,7 @@ const ErrorDisplay: React.FC<{ onReset: () => void }> = ({ onReset }) => (
     </div>
 );
 
-const ResultsDisplay: React.FC<{ results: SimulationResults; onReset: () => void }> = ({ results, onReset }) => {
+const ResultsDisplay: React.FC<{ results: SimulationResults; onReset: () => void, modelParams: ModelParams }> = ({ results, onReset, modelParams }) => {
     
     // Icons for visualization cards for consistency and clarity
     const VelocityIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (<svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>);
@@ -84,7 +85,7 @@ const ResultsDisplay: React.FC<{ results: SimulationResults; onReset: () => void
             </div>
 
             <div className="mb-8 w-full h-[400px] md:h-[500px]">
-                <Simulation3DViewer streamlinesData={results.streamlinesData} />
+                <Simulation3DViewer streamlinesData={results.streamlinesData} modelParams={modelParams} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -135,7 +136,7 @@ const ResultsDisplay: React.FC<{ results: SimulationResults; onReset: () => void
 };
 
 
-const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ status, results, onReset }) => {
+const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ status, results, onReset, modelParams }) => {
   if (status === 'running') {
     return <LoadingIndicator />;
   }
@@ -143,7 +144,7 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ status, results, on
     return <ErrorDisplay onReset={onReset} />;
   }
   if (status === 'completed' && results) {
-    return <ResultsDisplay results={results} onReset={onReset} />;
+    return <ResultsDisplay results={results} onReset={onReset} modelParams={modelParams} />;
   }
   return null;
 };
