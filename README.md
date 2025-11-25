@@ -36,6 +36,57 @@ This repository is configured to automatically deploy the application to GitHub 
 
 To enable this for your fork of the repository, you need to:
 
+This repository contains a standalone, browser-based computational fluid dynamics (CFD) modeling tool. It can be used to simulate airflow around a 3D model and visualize the results.
+
+**Note:** The simulation is a mock and does not perform real CFD calculations. It is intended for demonstration purposes only.
+
+## How to Use
+
+1. **Build the application:**
+   - First, ensure you have Node.js installed.
+   - Install the development dependencies:
+     ```
+     npm install
+     ```
+   - Build the application:
+     ```
+     npm run build
+     ```
+2. **Run the application:**
+   - After the build is complete, you will find the standalone application in the `dist` directory.
+   - Open the `dist/index.html` file in your web browser to use the modeling tool.
+<div align="center">
+  <a href="https://[dr-richard-barker].github.io/aeroleaf-cfd-blender-integrated-airflow-analysis/" target="_blank">
+    <img src="https://img.shields.io/badge/Launch-Application-brightgreen?style=for-the-badge&logo=rocket" alt="Launch Application">
+  </a>
+</div>
+
+This repository contains a standalone, browser-based computational fluid dynamics (CFD) modeling tool. It can be used to simulate airflow around a 3D model and visualize the results.
+
+**Note:** The simulation is a mock and does not perform real CFD calculations. It is intended for demonstration purposes only.
+
+## How to Use
+
+1. **Build the application:**
+   - First, ensure you have Node.js installed.
+   - Install the development dependencies:
+     ```
+     npm install
+     ```
+   - Build the application:
+     ```
+     npm run build
+     ```
+2. **Run the application:**
+   - After the build is complete, you will find the standalone application in the `dist` directory.
+   - Open the `dist/index.html` file in your web browser to use the modeling tool.
+
+## Deployment to GitHub Pages
+
+This repository is configured to automatically deploy the application to GitHub Pages when changes are pushed to the `main` branch.
+
+To enable this for your fork of the repository, you need to:
+
 1.  **Enable GitHub Pages:**
     - Go to your repository's **Settings** tab.
     - In the left sidebar, click on **Pages**.
@@ -45,3 +96,4 @@ To enable this for your fork of the repository, you need to:
     - In this `README.md` file, replace `[YOUR_USERNAME]` in the launch button's URL with your GitHub username.
 
 Once GitHub Pages is enabled, the application will be available at `https://[YOUR_USERNAME].github.io/Aero-leaf-CFD-analysis-adapted-from-blender-ish/`.
+Once GitHub Pages is enabled, the application will be available at `https://[YOUR_USERNAME].github.io/aeroleaf-cfd-blender-integrated-airflow-analysis/`.
