@@ -2,19 +2,24 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# AeroLeaf CFD: Standalone Airflow Analysis Tool
 
-This contains everything you need to run your app locally.
+This repository contains a standalone, browser-based computational fluid dynamics (CFD) modeling tool. It can be used to simulate airflow around a 3D model and visualize the results.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1QF00G08zvOHdF1uu1wUqa80ov4VhIBSN
+**Note:** The simulation is a mock and does not perform real CFD calculations. It is intended for demonstration purposes only.
 
-## Run Locally
+## How to Use
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. **Build the application:**
+   - First, ensure you have Node.js installed.
+   - Install the development dependencies:
+     ```
+     npm install
+     ```
+   - Build the application:
+     ```
+     npm run build
+     ```
+2. **Run the application:**
+   - After the build is complete, you will find the standalone application in the `dist` directory.
+   - Open the `dist/index.html` file in your web browser to use the modeling tool.
