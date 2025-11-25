@@ -1,20 +1,30 @@
+# AeroLeaf CFD: An Interactive Web-Based Airflow Modeling Tool
+
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+  <a href="https://dr-richard-barker.github.io/Aero-leaf-CFD-analysis-adapted-from-blender-ish/" target="_blank">
+    <img src="https://img.shields.io/badge/Launch-Interactive%20Tool-brightgreen?style=for-the-badge&logo=rocket" alt="Launch Interactive Tool">
+  </a>
 </div>
 
-# Run and deploy your AI Studio app
+AeroLeaf CFD is a standalone, browser-based application for simulating and visualizing airflow around 3D models. This interactive tool provides a streamlined, step-by-step process for setting up and running computational fluid dynamics (CFD) simulations, making it an ideal platform for educational purposes, rapid prototyping, and design exploration.
 
-This contains everything you need to run your app locally.
+**Note:** This application uses a mock simulation engine and is intended for demonstration and educational purposes only. It does not perform real-world CFD calculations.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1QF00G08zvOHdF1uu1wUqa80ov4VhIBSN
+## Features
 
-## Run Locally
+- **Interactive 5-Step Simulation Setup:** A guided workflow to configure your simulation, including model upload, domain setup, environmental conditions, and solver settings.
+- **Client-Side Simulation:** Runs entirely in your browser with no backend dependencies or installation required.
+- **Rich Result Visualization:** View simulation results through a comprehensive dashboard, including:
+  - Drag and Lift Coefficient Plots
+  - Velocity, Pressure, and Turbulence Contour Maps
+  - Detailed Mesh Visualizations
+  - 2D Streamline Diagrams
+- **Configuration Management:** Save and load your simulation parameters to and from your local machine for easy reuse.
 
-**Prerequisites:**  Node.js
+## How to Use
 
+Simply click the **Launch Interactive Tool** button at the top of this page to start the application in your browser.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Contributing
+
+This project is open for contributions. If you are a developer interested in improving AeroLeaf CFD, please see our [**Contributing Guide**](CONTRIBUTING.md) for instructions on how to set up the project locally, run the development server, and deploy your changes.
