@@ -5,7 +5,7 @@
 # AeroLeaf CFD: Standalone Airflow Analysis Tool
 
 <div align="center">
-  <a href="https://[YOUR_USERNAME].github.io/aeroleaf-cfd-blender-integrated-airflow-analysis/" target="_blank">
+  <a href="https://[dr-richard-barker].github.io/aeroleaf-cfd-blender-integrated-airflow-analysis/" target="_blank">
     <img src="https://img.shields.io/badge/Launch-Application-brightgreen?style=for-the-badge&logo=rocket" alt="Launch Application">
   </a>
 </div>
